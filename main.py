@@ -1,5 +1,9 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from routers import biometric, trail, poi, history
+from schemas.common import CommonResponse
+from utils import success_response
 
 tags_metadata = [
     {
@@ -13,6 +17,10 @@ tags_metadata = [
     {
         "name": "History",
         "description": "사용자 등반 이력 데이터"
+    },
+    {
+        "name": "Health",
+        "description": "서버 상태 확인"
     }
 ]
 
@@ -23,11 +31,29 @@ app = FastAPI(
     openapi_tags=tags_metadata
 )
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "code": "422",
+            "msg": "유효성 검사 실패",
+            "detail": exc.errors()
+        }
+    )
+
 app.include_router(biometric.router, prefix="/sookmyung", tags=["Biometric"])
 app.include_router(trail.router, prefix="/sookmyung", tags=["Trail & POI"])
 app.include_router(poi.router, prefix="/sookmyung", tags=["Trail & POI"])
 app.include_router(history.router, prefix="/sookmyung", tags=["History"])
 
-@app.get("/")
+@app.get("/",
+    response_model=CommonResponse,
+    summary="Health Check",
+    responses={
+        200: {"description": "성공"}
+    },
+    tags=["Health"]
+)
 def read_root():
-    return {"message": "SAFE API 서버 작동 중"}
+    return success_response()
