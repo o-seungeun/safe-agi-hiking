@@ -1,7 +1,14 @@
+#
+# DTO-5 결과를 만들고 언제 전송할지 결정
+# 필요할 때 inavi_client.py의 함수를 호출
+# 무엇을 보낼지 결정
+# inavi_client.py가 result.py의 하위 모듈처럼 쓰이는 구조
+#
+
 import httpx
 from datetime import datetime
 
-AIRNAVI_SERVER_URL = "http://3.37.223.154:1447/sookmyung/result"  # 아이나비 개발 서버
+AIRNAVI_SERVER_URL = "POST http://3.37.223.154:1447/OrdaAI/sookmyung/result"
 
 async def send_result(uuid: str, user_id: str, lat: float, lon: float):
     # 더미 결과 (모델 완성 후 ml/maml.py 결과로 교체 예정)

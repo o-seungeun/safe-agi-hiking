@@ -19,7 +19,7 @@ tags_metadata = [
         "description": "사용자 등반 이력 데이터"
     },
     {
-        "name": "Health",
+        "name": "default",
         "description": "서버 상태 확인"
     }
 ]
@@ -53,7 +53,7 @@ app.include_router(history.router, prefix="/sookmyung", tags=["History"])
     responses={
         200: {"description": "성공"}
     },
-    tags=["Health"]
+    tags=["default"]
 )
 def read_root():
     return success_response()
