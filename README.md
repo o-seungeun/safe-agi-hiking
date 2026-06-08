@@ -21,7 +21,6 @@
 * Python
 * FastAPI
 * PostgreSQL
-* SQLAlchemy
 * Pydantic
 * httpx
 * Uvicorn
