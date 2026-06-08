@@ -8,7 +8,7 @@
 import httpx
 from datetime import datetime
 
-AIRNAVI_SERVER_URL = "POST http://3.37.223.154:1447/OrdaAI/sookmyung/result"
+AIRNAVI_SERVER_URL = "http://3.37.223.154:1447/OrdaAI/sookmyung/result"
 
 async def send_result(uuid: str, user_id: str, lat: float, lon: float):
     # 더미 결과 (모델 완성 후 ml/maml.py 결과로 교체 예정)
