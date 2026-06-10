@@ -11,6 +11,7 @@ from database import get_db
 from services.result import send_result
 from utils import success_response, error_response, COMMON_RESPONSES
 import datetime
+from models.users import User
 
 router = APIRouter()
 
@@ -27,11 +28,25 @@ router = APIRouter()
     }
 )
 async def receive_normal(data: BiometricNormal, userId: str = Header(...), db: Session = Depends(get_db)):
-    if len(data.samples) != 60:
-        return error_response(
-            code="100",
-            msg=f"samples 배열 크기가 60이어야 함. 수신 크기: {len(data.samples)}"
+# samlples 60개 검증 로직
+#    if len(data.samples) != 60:
+#       return error_response(
+#           code="100",
+#           msg=f"samples 배열 크기가 60이어야 함. 수신 크기: {len(data.samples)}"
+#       )
+
+    # 유저 없으면 자동 생성
+    existing_user = db.get(User, userId)
+    if not existing_user:
+        new_user = User(
+            user_id=userId,
+            hiking_experience_years=0,
+            fitness_level=3,
+            chronic_conditions=[],
+            total_sessions=0
         )
+        db.add(new_user)
+        db.flush()
 
     # 세션 없으면 생성
     existing = db.get(HikingSession, data.uuid)
@@ -133,6 +148,19 @@ async def receive_emergency(data: BiometricEmergency, userId: str = Header(...),
             code="100",
             msg=f"긴급 채널 samples 배열 크기는 최대 10개. 수신 크기: {len(data.samples)}"
         )
+
+    # 유저 없으면 자동 생성
+    existing_user = db.get(User, userId)
+    if not existing_user:
+        new_user = User(
+            user_id=userId,
+            hiking_experience_years=0,
+            fitness_level=3,
+            chronic_conditions=[],
+            total_sessions=0
+        )
+        db.add(new_user)
+        db.flush()
 
     existing = db.get(HikingSession, data.uuid)
     if not existing:
